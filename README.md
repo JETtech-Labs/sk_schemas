@@ -1,2 +1,7 @@
-# sk_schemas
-SecureKey API Schemas and Pydantic Models
+
+## Secure Key REST API Schema Definitions ##
+The Schemas for the Secure Key REST API.
+
+
+
+
