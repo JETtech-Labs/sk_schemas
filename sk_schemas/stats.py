@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 API_STATS = "/stats"
 API_STATS_V1 = API_STATS + "/v1"
+API_STATS_V2 = API_STATS + "/v2"
 
 
 class SysTimeModel(BaseModel):
@@ -18,6 +19,15 @@ class SysTimeModel(BaseModel):
 
 class StatsStringModel(BaseModel):
     stats: str = Field(description="Statistics string")
+
+
+class NameValue(BaseModel):
+    name: str = Field(description="Name")
+    value: int = Field(description="Value", examples=[1000])
+
+
+class DpStats(SysTimeModel):
+    stats: List[NameValue] = Field(description="Statistics List")
 
 
 class StatusEnum(str, Enum):

@@ -12,6 +12,7 @@ from sqlmodel import Column, Field, SQLModel
 
 from sk_schemas.inet import MacAddress
 from sk_schemas.intf import IfaceRoleTypes
+from sk_schemas.stats import SysTimeModel
 
 API_ACL = "/acl"
 API_ACL_V1 = API_ACL + "/v1"
@@ -54,7 +55,7 @@ class IpProtocol(Enum):
 class MacIpAclRule(BaseModel):
     """MACIP ACL Rules are ingress only ACL which permit/deny traffic based MAC and IP address matches"""
 
-    is_permit: AclAction = Field(description="Rule Action", default=True)
+    is_permit: AclAction = Field(description="Rule Action")
     src_mac: MacAddress = Field(
         description="Source MAC Address",
     )
@@ -124,9 +125,10 @@ class IpAclRule(SQLModel):
         description="Source Prefix",
         sa_column=Column(IPv4NetworkType),
     )
-    proto: IpProtocol = Field(
+    proto: int = Field(
         description="Protocol",
-        sa_column=Column(SqlEnum(IpProtocol)),
+        ge=0,
+        le=255,
     )
     src_port_first: int = Field(
         description="Source Port First", ge=0, le=65535, default=0
@@ -186,12 +188,12 @@ class IpAclRule(SQLModel):
     # convert the rule to a string
     def to_string(self) -> str:
         in_out_str = "In" if self.is_input else "Out"
-        return f"{self.is_permit.value}-{in_out_str}-{self.src_port_last}-{self.src_port_first}-{self.dst_port_last}-{self.dst_port_first}-{self.proto.value}-{self.src_prefix}-{self.dst_prefix}-{self.tcp_flags_mask}-{self.tcp_flags_value}"
+        return f"{self.is_permit.value}-{in_out_str}-{self.src_port_last}-{self.src_port_first}-{self.dst_port_last}-{self.dst_port_first}-{self.proto}-{self.src_prefix}-{self.dst_prefix}-{self.tcp_flags_mask}-{self.tcp_flags_value}"
 
     def encode(self) -> dict:
         return {
             "is_permit": self.is_permit.value,
-            "proto": self.proto.value,
+            "proto": self.proto,
             "srcport_or_icmptype_first": self.src_port_first,
             "srcport_or_icmptype_last": self.src_port_last,
             "src_prefix": str(self.src_prefix),
@@ -199,3 +201,16 @@ class IpAclRule(SQLModel):
             "dstport_or_icmpcode_last": self.dst_port_last,
             "dst_prefix": str(self.dst_prefix),
         }
+
+
+class AclStats(SysTimeModel):
+
+    rule_description: str = Field(
+        description="ACL Rule Tag Description",
+    )
+    packets: int = Field(
+        description="Packets Filtered by ACL",
+    )
+    bytes: int = Field(
+        description="Bytes Filtered by ACL",
+    )

@@ -6,8 +6,11 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, field_validator
 
+from sk_schemas.inet import IpSubnetModel
+
 API_INTERFACES = "/interfaces"
 API_INTERFACES_V1 = API_INTERFACES + "/v1"
+API_INTERFACES_V2 = API_INTERFACES + "/v2"
 
 VPP_MAC_ADDR_FIELD = Field(
     description="Interface MAC Address",
@@ -53,7 +56,7 @@ class VppIfIndex(BaseModel):
     )
 
 
-class IfaceSettings(VppIfIndex):
+class VppIfaceSettings(VppIfIndex):
     if_name: str = Field(
         description="Interface Name",
         examples=["eth0"],
@@ -110,6 +113,14 @@ class IfaceSettings(VppIfIndex):
     vlanid: int = Field(
         description="VLAN ID", examples=[100], json_schema_extra={"vpp_api": "b_vlanid"}
     )
+
+
+class IfaceSettings(VppIfaceSettings):
+    ip_addrs: list[IpSubnetModel] = Field(
+        description="Interface IP Addresses",
+        default=[],
+    )
+    interface_role: IfaceRoleTypes = Field(description="Interface Role")
 
 
 class IfaceRoleSet(BaseModel):

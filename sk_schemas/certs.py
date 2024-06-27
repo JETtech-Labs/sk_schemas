@@ -77,8 +77,11 @@ class CsrSignedRequestModel(BaseModel):
     )
 
 
-class CsrResponseModel(BaseModel):
+class CsrUuidModel(BaseModel):
     id: str = Field(description="Unique ID for the CSR")
+
+
+class CsrResponseModel(CsrUuidModel):
     fingerprint: str = Field(description="Private Key Fingerprint")
     csr_data: str = Field(description="PEM formatted Certificate Signing Request")
 
@@ -157,6 +160,9 @@ class CertInfoModel(BaseModel):
     usage: CertUsageEnum = Field(
         description="Certificate Usage",
         default=CertUsageEnum.IPSEC,
+    )
+    key_fingerprint: str | None = Field(
+        description="Private Key Fingerprint", default=None
     )
 
 

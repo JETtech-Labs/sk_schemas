@@ -30,6 +30,7 @@ class UserName(BaseModel):
 class UserInfo(UserName):
     is_admin: bool = Field(default=False)
     is_active: bool = Field(default=True)
+    is_otp_enabled: bool = Field(default=False)
 
 
 class SSHUserInfo(UserName):
