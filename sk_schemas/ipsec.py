@@ -170,6 +170,8 @@ class ChildConnCreateModel(EncParamsModel, NameModel):
         default=6000,
         json_schema_extra={"key": " life-time"},
     )
+    esn: bool = Field(description="Extended Sequence Number", default=False)
+
     local_ts: List[IpSubnetModel] = Field(
         description="Local Traffic Selectors", json_schema_extra={"key": " local-ts"}
     )
