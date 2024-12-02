@@ -42,7 +42,7 @@ class ComponentEnum(str, Enum):
     vpp = "vpp"
     charon = "charon"
     ssh = "ssh"
-    crypto = "crypto"
+    SecureKeyDataplane = "SecureKey-dataplane"
     https = "https"
 
 

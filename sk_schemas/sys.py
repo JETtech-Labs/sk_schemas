@@ -2,12 +2,12 @@
 
 
 from enum import Enum
-from ipaddress import IPv6Address
+from ipaddress import IPv4Address, IPv6Address
 from typing import List, Union
 
 from pydantic import BaseModel, Field
-from pydantic.networks import IPv4Address
 
+# from pydantic.networks import IPv4Address
 from sk_schemas.intf import HostnameModel
 
 API_SYS = "/sys"

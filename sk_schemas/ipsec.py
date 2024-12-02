@@ -20,9 +20,21 @@ class NameModel(BaseModel):
     )
 
 
+class ConnectionSaModel(BaseModel):
+    connection_name: NameModel
+    sa_name: NameModel
+
+
 class ModeEnum(str, Enum):
     transport = "transport"
     tunnel = "tunnel"
+
+
+class StartActionEnum(str, Enum):
+    start = "start"
+    none = "none"
+    trap = "trap"
+    trap_start = "trap-start"
 
 
 class EspEncapEnum(str, Enum):
@@ -171,7 +183,11 @@ class ChildConnCreateModel(EncParamsModel, NameModel):
         json_schema_extra={"key": " life-time"},
     )
     esn: bool = Field(description="Extended Sequence Number", default=False)
-
+    start_action: StartActionEnum = Field(
+        description="Start Action",
+        default=StartActionEnum.none,
+        json_schema_extra={"key": "start-action"},
+    )
     local_ts: List[IpSubnetModel] = Field(
         description="Local Traffic Selectors", json_schema_extra={"key": " local-ts"}
     )
@@ -248,6 +264,12 @@ class BaseIKEConnModel(EncParamsModel, NameModel):
         description="Local Certificate Fingerprint",
         default=None,
     )
+    local_cacerts: List[str] = Field(
+        description="Local CA Certificate IDs",
+        examples=["CN=CA1.strongswan.org"],
+        json_schema_extra={"key": "local-cacert"},
+        default=[],
+    )
     remote_host: IPorDNSNameModel = Field(
         description="Remote IP Address", json_schema_extra={"key": " remote-host"}
     )
@@ -317,7 +339,6 @@ class SAModel(BaseIKEConnModel, extra="allow"):
     established: int = Field(
         description="Established time in seconds", examples=[60], default=0
     )
-    tasks_active: List[str] | None = Field(description="Tasks Active", default=None)
     child_sas: List[ChildSAModel] = Field(
         description="Child SAs", json_schema_extra={"key": " child-sas"}
     )
@@ -337,5 +358,13 @@ class SAModel(BaseIKEConnModel, extra="allow"):
         description="Tasks Passive",
         examples=[["IKE_INIT", "IKE_CERT_PRE", "IKE_AUTH"]],
         json_schema_extra={"key": "tasks-passive"},
+        default=[],
+    )
+    tasks_active: List[str] | None = Field(description="Tasks Active", default=[])
+
+    tasks_queued: List[str] = Field(
+        description="List of currently queued tasks for execution",
+        examples=[["CHILD_CREATE"]],
+        json_schema_extra={"key": "tasks-queued"},
         default=[],
     )
