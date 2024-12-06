@@ -145,6 +145,21 @@ class KeyInfoModel(KeyFingerprint, KeyLoadedInfoModel):
     )
 
 
+class SharedSecretsModel(BaseModel):
+    id: str = Field(
+        description="Unique Identifier for Shared Secrets (PPKs, etc.)",
+    )
+    type: str = Field(
+        description="Type of Shared Secret", examples=["PPK", "IKE"], default="PPK"
+    )
+
+
+class SharedSecretDataModel(SharedSecretsModel):
+    data: HexString = Field(
+        description="Hexadecimal Data String for Shared Secret or Postquantum Preshared Key (PPK, RFC 8784)",
+    )
+
+
 class SSHPubKeyModel(BaseModel):
     data: str = Field(description="SSH Public Key Data")
 

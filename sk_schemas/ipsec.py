@@ -139,6 +139,10 @@ class ConnectionModel(BaseModel, extra="allow"):
     reauth_time: int = Field(description="Re-Authentication Time in Seconds", default=0)
     rekey_time: int = Field(description="Re-Key Time in Seconds")
     unique: str = Field(description="Unique name for this Connection")
+    ppk_id: str | None = Field(
+        description="Postquantum Preshared Key Identifier (PPK)", default=None
+    )
+    ppk_required: str | None = Field(description="Is PPK required", default=None)
     local_1: List[SACertModel] = Field(description="List of Local SAs")
     remote_1: List[SACertModel] = Field(description="List of Remote SAs")
     children: List[ChildConnModel] = Field(description="List of Children SAs")
@@ -159,9 +163,15 @@ class EncParamsModel(BaseModel):
     )
     dh_group: str = Field(
         description="DH Group Name",
-        examples=["MODP_4096", "ECP384"],
-        default="MODP_4096",
+        examples=["MODP_4096", "ECP_384"],
+        default="",
         json_schema_extra={"key": "dh-group"},
+    )
+    kem_groups: List[str] | None = Field(
+        description="Additional Key Exchange Methods (RFC 9370)",
+        examples=["mlkem786", "mlkem1024"],
+        default=None,
+        max_length=7,
     )
 
 
@@ -309,6 +319,11 @@ class BaseIKEConnModel(EncParamsModel, NameModel):
         examples=[3600],
         default=0,
         json_schema_extra={"key": " reauth-time"},
+    )
+    ppk_id: str | None = Field(
+        description="Postquantum Preshared Key Identifier (PPK, RFC 8784)",
+        default=None,
+        json_schema_extra={"key": " ppk_id"},
     )
 
 
