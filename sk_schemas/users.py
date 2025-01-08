@@ -7,6 +7,7 @@ from sk_schemas.certs import SSHPubKeyModel
 
 API_USERS = "/users"
 API_USERS_V1 = API_USERS + "/v1"
+API_USERS_V2 = API_USERS + "/v2"
 
 
 class UserName(BaseModel):
@@ -77,6 +78,13 @@ class UserChangePassword(UserLogin):
 
 class UserCreate(UserInfo, UserPassword):
     pass
+
+
+class InitialUser(UserCreate):
+    instance_id: str = Field(
+        description="Instance ID - must match Instance ID assigned in order to add initial user",
+        default=None,
+    )
 
 
 class UserUpdate(UserCreate):
