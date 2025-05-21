@@ -9,6 +9,7 @@ from pydantic_core import PydanticCustomError, core_schema
 
 API_CERTS = "/certs"
 API_CERTS_V1 = API_CERTS + "/v1"
+API_CERTS_V2 = API_CERTS + "/v2"
 
 
 class HexString(str):
@@ -209,6 +210,11 @@ class CertDetailModel(BaseModel):
     )
     extensions_count: int = Field(description="Certificate Extensions Count")
     extensions: List[x509ExtensionsModel] = Field(description="Certificate Extensions")
+
+
+class TLSReloadModel(BaseModel):
+    client: bool = True
+    server: bool = True
 
 
 class SSLVerifClientEnum(str, Enum):
